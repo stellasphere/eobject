@@ -5,12 +5,14 @@ var debugSetting = false;
 module.exports = {}
 
 module.exports.setup = function(recievedObject, settings) {
+  var eobjectSettings = settings || {}
+
   // Sets the object with the object recieved from the setup function.
   object = recievedObject;
 
   setup = true;
 
-  if(settings.debug === true) debugSetting = true
+  if(eobjectSettings.debug === true) debugSetting = true
 }
 
 module.exports.generator = async function(req, res, next) {
