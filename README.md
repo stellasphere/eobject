@@ -36,9 +36,9 @@ To use on a directory: `app.use('/api',eobject.generator);`
 
 
 ## Docs
-### eobject.setup( *object* , *settings (optional)* )
+### eobject.setup( *object* , *settings* )
 The setup function configures eobject with the object that it should generate routes from.
-It accepts a JavaScript object and a [settings](#settings) object. The [settings](#settings) object is optional.
+It accepts a JavaScript object and a [settings](#settings) object.
 #### Usage Example
 ```
 const eobject = require('eobject');
@@ -74,7 +74,7 @@ var settings = {
   debug: true
 }
 
-eobject.setup(object,debug)
+eobject.setup(object,{})
 ```
 
 
@@ -99,7 +99,7 @@ const object = {
 }
 
 const eobject = require('eobject');
-eobject.setup(object);
+eobject.setup(object,{});
 app.use('/api',eobject.generator)
 
 app.get('*',(req,res)=>{
