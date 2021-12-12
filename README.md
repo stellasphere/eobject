@@ -8,6 +8,7 @@ Compatible with all data types, including functions, valid in JavaScript objects
 | JSON | Web |
 |--|--|
 | ![A JSON Object](https://i.ibb.co/HBJGwcM/chrome-Y4-Nm-I8-Au8s.png) | example.com/info - `{name:"Test",version: "1.0.0"}`<br> example.com/info/name - `Test`<br> example.com/info/version - `1.0.0`<br> example.com/users - `{}`<br> example.com/users/add - *nothing*<br> example.com/users/add?email=johndoe@example.com - `johndoe@example.com`
+The above is based on the [example](#example). 
 
 ### A note on functions:
 Functions do work in eobject. Functions, if they have parameters, will pull them from the query string (*?firstName=John&lastName=Doe*) and send them matched to the parameter names of the function.  
@@ -28,7 +29,7 @@ Order of the query strings does not matter, but the name of the field/key must e
 - Use the generator function in `app.get();`.  
 To use on the root: `app.use(eobject.generator);`  
 To use on a directory: `app.use('/api',eobject.generator);`  
-- Then, it should be accessible. `object.info.name` should corespond to `/info/name`
+- Then, it should be accessible. Ex: `object.info.name` should corespond to `/info/name`
 
 
 
@@ -37,7 +38,7 @@ To use on a directory: `app.use('/api',eobject.generator);`
 ## Docs
 ### eobject.setup( *object* , *settings (optional)* )
 The setup function configures eobject with the object that it should generate routes from.
-It accepts a JavaScript object and a settings object. The settings object is optional.
+It accepts a JavaScript object and a [settings](#settings) object. The [settings](#settings) object is optional.
 #### Usage Example
 ```
 const eobject = require('eobject');
@@ -69,12 +70,6 @@ app.use('/api',eobject.generator)
 The settings object currently only takes the `debug` property.
 #### Usage Example
 ```
-var object = {
-  properties: {
-    a: "yes",
-    b: "no"
-  }
-}
 var settings = {
   debug: true
 }
