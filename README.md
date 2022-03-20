@@ -41,6 +41,9 @@ The setup function configures eobject with the object that it should generate ro
 It accepts a JavaScript object and a [settings](#settings) object.
 #### Usage Example
 ```
+const express = require('express');
+const app = express();
+
 const eobject = require('eobject');
 
 var object = {
@@ -53,7 +56,12 @@ var settings = {
   debug: true
 }
 
-eobject.setup(object,debug)
+eobject.setup(object,settings)
+app.use('/api',eobject.generator)
+
+app.listen(3000, () => {
+  console.log('server started');
+});
 ```
 
 
