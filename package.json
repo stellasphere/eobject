@@ -1,6 +1,6 @@
 {
   "name": "eobject",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Generate Express.js routes easily and automatically from a object.",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,10 @@
   ],
   "author": "stellasphere",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "express": "^4.17.3"
+  },
   "devDependencies": {},
   "repository": {
     "type": "git",

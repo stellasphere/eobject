@@ -1,29 +1,49 @@
 var object = {}
 var setup = false;
-var debugSetting = false;
+var settings = {
+  "debug": false,
+  "secureonly": false,
+  "rootpagedisplay": true,
+  "ifnotfoundsendtonext": true,
+  "ifemptyobjectstillsend": true,
+  "acceptqueryfunctionarguments": true,
+  "acceptbodyfunctionarguments": false,
+  "validtypes": {
+    "function": true,
+    "object": true,
+    "string": true,
+    "number": true
+  }
+};
 
 module.exports = {}
 
-module.exports.setup = function(recievedObject, settings) {
-  var eobjectSettings = settings || {}
-
+module.exports.setup = function(recievedObject, recievedSettings) {
+  Object.assign(settings,recievedSettings)
+  debug("Settings",settings)
+  setup = true;
+  
   // Sets the object with the object recieved from the setup function.
   object = recievedObject;
 
-  setup = true;
-
-  if(eobjectSettings.debug === true) debugSetting = true
 }
 
-module.exports.generator = async function(req, res, next) {
-  if(setup === false) new Error("Object Routes Generator - Not Setup Yet")
+module.exports.generator = async function(req, res, next) {  
+  if(setup === false) new Error("Not Setup Yet")
 
   var path = req.path.split("/");
   path.shift();
   debug("Requested Path",path)
 
+  // Secure Check
+  var secure = ( (req.secure == true) || (req.headers['x-forwarded-proto'] == 'https') )
+  if((settings.secureonly === true) && (!secure)) {
+    debug("Request Denied Due To Unsecure Connection")
+    return res.status(403).send("403 Not Secure | Only secure connections are allowed as specified by the options")
+  }
+  
   // Root page
-  if(path[0] === "") {
+  if( (path[0] === "") && (settings.rootpagedisplay === true) ) {
     return res.send(`Object Routes Generator <hr>
     From this path, you can enter a API request for the following paths:
     ${Object.keys(object).join(",")}`)
@@ -40,7 +60,11 @@ module.exports.generator = async function(req, res, next) {
       debug("Object Narrowed",currentPathData)
     } else {
       debug("Skipped - Property Not Found")
-      return next();
+      if(settings.ifnotfoundsendtonext === true) {
+        return next();
+      } else {
+        return res.status(404).send("404 Not Found | Property Not Found")
+      }
     }
   }
 
@@ -48,52 +72,71 @@ module.exports.generator = async function(req, res, next) {
   debug("Final Object",currentPathData,typeof currentPathData)
 
   // Alters returning data based on the type of data.
-  if( (typeof currentPathData) === "function" ) {
-    var functionArguments = req.query;
+  if( ((typeof currentPathData) === "function") && (settings.validtypes.function ===  true) ) {
+    var receivedArguments = req.query;
+    var receivedData = req.body;
     debug("Query",req.query)
+    debug("Body",receivedData)
 
     var commentStripping = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
     var argumentNames = /([^\s,]+)/g
     var functionString = currentPathData.toString().replace(commentStripping, '');
-    var functionParameters = functionString.slice(functionString.indexOf('(')+1, functionString.indexOf(')')).match(argumentNames);
-    if(functionParameters === null) functionParameters = [];
+    var functionArguments = functionString.slice(functionString.indexOf('(')+1, functionString.indexOf(')')).match(argumentNames);
+    if(functionArguments === null) functionArguments = [];
+    var functionArgumentsData = []
 
-    debug("Function Parameters",functionParameters)
-
-    for(i in functionParameters) {
-      debug("Current Parameters",functionParameters[i])
-      if(functionArguments.hasOwnProperty(functionParameters[i])) {
-        debug("Found Matching Function Parameter",functionParameters[i],functionArguments[functionParameters[i]])
-        functionParameters[i] = functionArguments[functionParameters[i]]
-      } else {
-        functionParameters[i] = undefined
+    debug("Function Arguments",functionArguments)
+    
+    // QUERY STRING PARAMETERS
+    if(settings.acceptqueryfunctionarguments === true) {
+      debug("Checking Query String For Function Argument Data")
+      for(i in functionArguments) {
+        debug("Current Arguments",functionArguments[i])
+        if(receivedArguments.hasOwnProperty(functionArguments[i])) {
+          debug("Found Matching Function Argument",functionArguments[i],receivedArguments[functionArguments[i]])
+          functionArgumentsData[i] = receivedArguments[functionArguments[i]]
+        } else {
+          functionArgumentsData[i] = undefined
+        }
+      }  
+    }
+    
+    // REQUEST BODY PARAMETERS
+    if(settings.acceptbodyfunctionarguments === true) {
+      debug("Checking Body For Function Argument Data")
+      for(i in functionArguments) {
+        debug("Current Arguments",functionArguments[i])
+        if(receivedData.hasOwnProperty(functionArguments[i])) {
+          debug("Found Matching Function Argument",functionArguments[i],receivedData[functionArguments[i]])
+          functionArgumentsData[i] = receivedData[functionArguments[i]]
+        } else {
+          functionArgumentsData[i] = undefined || functionArgumentsData[i]
+        }
       }
     }
 
-    debug("Finalized Arguments",functionParameters)
+    debug("Finalized Arguments",functionArgumentsData)
 
-    return res.json(await currentPathData(...functionParameters))
-  } else if( (typeof currentPathData) === "object" ) {
-    return res.json(currentPathData)
-  } else if( (typeof currentPathData) === "string" ) {
+    return res.json(await currentPathData(...functionArgumentsData))
+  } else if( ((typeof currentPathData) === "object") && (settings.validtypes.object ===  true) ) {
+    if(!(Object.keys(currentPathData).length === 0)) {
+      return res.json(currentPathData)
+    }    
+  } else if( ((typeof currentPathData) === "string") && (settings.validtypes.string ===  true) ) {
     return res.send(currentPathData)
-  } else if( (typeof currentPathData) === "number" ) {
+  } else if( ((typeof currentPathData) === "number") && (settings.validtypes.number ===  true) ) {
     return res.send(currentPathData.toString())
   } else {
-    try {
-      return res.send(currentPathData)
-    } catch(e) {
-      debug("Skipped")
-      next()
-    }
+    debug("Skipped","Invalid Data Type",(typeof currentPathData),currentPathData)
+    next()
   }
 
   debug("Skipped")
-  next();
+  if(settings.ifnotfoundsendtonext === true) next();
+}
 
-  function debug(item,...log) {
-    if(debugSetting === true) {
-      console.log("Object Routes Generator","-",item,...log)
-    }
+function debug(item,...log) {
+  if(settings.debug === true) {
+    console.log("Object Routes Generator","-",item,...log)
   }
 }
