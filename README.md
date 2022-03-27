@@ -112,7 +112,7 @@ If the argument name is firstName:
 `/users/add?firstname=example@example.com` - Will Not Work
 
 ### Pulling arguments from the request body
-eobject also has the option of pulling argument data from a JSON-formatted body of a HTTP request. This functionality can be enabled via the `acceptbodyfunctionarguments` option in the [settings] (#settings-options).
+eobject also has the option of pulling argument data from a JSON-formatted body of a HTTP request. **This functionality must be enabled via the `acceptbodyfunctionarguments` option in the [settings] (#settings-options) in order to be used.**
 
 Although having a body for other types of requests is theoretically valid, eobject only accepts common practice request bodies in PUT, POST and PATCH requests. 
 
