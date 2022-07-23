@@ -8,6 +8,9 @@ var settings = {
   "ifemptyobjectstillsend": true,
   "acceptqueryfunctionarguments": true,
   "acceptbodyfunctionarguments": false,
+  "requestdata": false,
+  "executefunctionintrycatch": true,
+  "functionerrormessage": {error:"There was an issue."},
   "validtypes": {
     "function": true,
     "object": true,
@@ -19,6 +22,7 @@ var settings = {
 module.exports = {}
 
 module.exports.setup = function(recievedObject, recievedSettings) {
+  recievedSettings = recievedSettings || {}
   Object.assign(settings,recievedSettings)
   debug("Settings",settings)
   setup = true;
@@ -115,9 +119,34 @@ module.exports.generator = async function(req, res, next) {
       }
     }
 
+    // REQUEST DATA
+    if(settings.requestdata === true) {
+      var lastargument = functionArguments[functionArguments.length-1]
+      var lastargumentdata = functionArgumentsData[functionArgumentsData.length-1]
+      
+      debug("Checking if last argument is 'req'",lastargument,lastargumentdata)
+
+      if((lastargument === "req")&&(lastargumentdata === undefined)) {
+        functionArgumentsData[functionArgumentsData.length-1] = req
+      }
+    }
+    
     debug("Finalized Arguments",functionArgumentsData)
 
-    return res.json(await currentPathData(...functionArgumentsData))
+    // EXECUTING THE FUNCTION
+    var functionResult
+    if(settings.executefunctionintrycatch) {
+      try {
+        functionResult = await currentPathData(...functionArgumentsData)
+      } catch(e) {
+        debug("Function execution resulted in a error",e)
+        return res.json(settings.functionerrormessage)
+      }
+    } else {
+      functionResult = await currentPathData(...functionArgumentsData)
+    }
+    
+    return res.json(functionResult)
   } else if( ((typeof currentPathData) === "object") && (settings.validtypes.object ===  true) ) {
     if(!(Object.keys(currentPathData).length === 0)) {
       return res.json(currentPathData)
