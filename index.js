@@ -10,7 +10,9 @@ var settings = {
   "acceptbodyfunctionarguments": false,
   "requestdata": false,
   "executefunctionintrycatch": true,
-  "functionerrormessage": {error:"There was an issue."},
+  "functionerrormessage": function(error) {
+    return {error}
+  },
   "validtypes": {
     "function": true,
     "object": true,
@@ -136,13 +138,18 @@ module.exports.generator = async function(req, res, next) {
     // EXECUTING THE FUNCTION
     var functionResult
     if(settings.executefunctionintrycatch) {
+      debug("Function excecuting in a try/catch")
       try {
         functionResult = await currentPathData(...functionArgumentsData)
       } catch(e) {
         debug("Function execution resulted in a error",e)
-        return res.json(settings.functionerrormessage)
+
+        var errormessage = settings.functionerrormessage(e)
+        
+        return res.json(errormessage)
       }
     } else {
+      debug("Function excecuting without try/catch")
       functionResult = await currentPathData(...functionArgumentsData)
     }
     

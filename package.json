@@ -1,6 +1,6 @@
 {
   "name": "eobject",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Generate Express.js routes easily and automatically from a object.",
   "main": "index.js",
   "scripts": {
