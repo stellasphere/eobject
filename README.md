@@ -70,7 +70,10 @@ app.use(eobject.generator)
   "ifnotfoundsendtonext": true,
   "ifemptyobjectstillsend": true,
   "acceptqueryfunctionarguments": true,
-  "acceptbodyfunctionarguments": true,
+  "acceptbodyfunctionarguments": false,
+  "requestdata": false,
+  "executefunctionintrycatch": true,
+  "functionerrormessage": (err) => {return {error:err}},
   "validtypes": {
     "function": true,
     "object": true,
@@ -80,17 +83,20 @@ app.use(eobject.generator)
 }
 ```
 #### Settings Options
-The following table specifies each settings option:
+The following table specifies each settings option: (See above for default settings)
 
 | Name | Description | 
 | --- | --- |
 | debug | Option for debug mode. It will show the process behind each and every request.  |
 | secureonly | Option for allowing secure connections only. Only HTTPS connections will be allowed and anything else will be rejected by a 403 Forbidden response. |
 | rootpagedisplay | Option to display the root 'welcome' screen. |
-| ifnotfoundsendtonext | Option to not send any unresolved requests beyond eobject. |
+| ifnotfoundsendtonext | Option to send any unresolved requests beyond eobject to other Express.js routes. |
 | ifemptyobjectstillsend | Option to still send any empty objects (empty object: {}) back to the client. |
 | acceptqueryfunctionarguments | Option to disable accepting function arguments from URL query strings. |
-| acceptbodyfunctionarguments | Option to enable accepting function arguments from the request body. ([Read enabling function argument matching from body](#Pulling-arguments-from-the-query-string-of-the-requested-URL)) |
+| acceptbodyfunctionarguments | Option to enable accepting function arguments from the request body. ([See: "Pulling Arguments From the Query String of the Requested URL"](#Pulling-arguments-from-the-query-string-of-the-requested-URL)) |
+| requestdata | Option to provide the [Express.js request (req)](https://expressjs.com/en/4x/api.html#req) object as the last parameter in a given function, if said last parameter is named `req`. |
+| executefunctionintrycatch | Option to execute [functions](#functions) in a `try/catch`, where eobject will return a error message (which can be configured in the `functionerrormessage` option, see below) or not. If the function is not executed in a `try/catch`, if the function throws an error, the entire program will exit. |
+| functionerrormessage | A function that configures the error message that is displayed when a function returns an error. |
 | validtypes | Options to independently disable any specific data type from being used in eobject. |
 
 ## Functions
@@ -106,10 +112,12 @@ eobject by default pulls argument data from the query string of the URL that is 
 
 The order of the query strings does not matter, but the name of the key must exactly match the name of the argument in the function, including the case.  
 **Example:**  
-If the argument name is firstName:  
+If the argument name is `firstName`:  
 `/users/add?firstName=example@example.com` - *Will Work*  
 `/users/add?FirstName=example@example.com` - Will Not Work  
 `/users/add?firstname=example@example.com` - Will Not Work
+
+Thus, it is recommended that function names do be named in lower-case. In the future, function names will become case-insensitive.
 
 ### Pulling arguments from the request body
 eobject also has the option of pulling argument data from a JSON-formatted body of a HTTP request. **This functionality must be enabled via the `acceptbodyfunctionarguments` option in the [settings] (#settings-options) in order to be used.**

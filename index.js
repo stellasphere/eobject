@@ -10,9 +10,7 @@ var settings = {
   "acceptbodyfunctionarguments": false,
   "requestdata": false,
   "executefunctionintrycatch": true,
-  "functionerrormessage": function(error) {
-    return {error}
-  },
+  "functionerrormessage": (err) => {return {error:err}},
   "validtypes": {
     "function": true,
     "object": true,
