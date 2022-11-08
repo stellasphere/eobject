@@ -9,6 +9,7 @@ var settings = {
   "acceptqueryfunctionarguments": true,
   "acceptbodyfunctionarguments": false,
   "requestdata": false,
+  "responsedata": false,
   "executefunctionintrycatch": true,
   "functionerrormessage": (err) => {return {error:err}},
   "validtypes": {
@@ -121,13 +122,30 @@ module.exports.generator = async function(req, res, next) {
 
     // REQUEST DATA
     if(settings.requestdata === true) {
-      var lastargument = functionArguments[functionArguments.length-1]
-      var lastargumentdata = functionArgumentsData[functionArgumentsData.length-1]
-      
-      debug("Checking if last argument is 'req'",lastargument,lastargumentdata)
+      for(argument in functionArguments) {
+        var lastargument = functionArguments[argument]
+        var lastargumentdata = functionArgumentsData[argument]
+        
+        debug("Checking if argument is 'req'",lastargument,lastargumentdata)
+  
+        if((lastargument === "req")&&(lastargumentdata === undefined)) {
+          functionArgumentsData[argument] = req
+        }
+      }
+    }
 
-      if((lastargument === "req")&&(lastargumentdata === undefined)) {
-        functionArgumentsData[functionArgumentsData.length-1] = req
+    
+    // RESPONSE DATA
+    if(settings.responsedata === true) {
+      for(argument in functionArguments) {
+        var lastargument = functionArguments[argument]
+        var lastargumentdata = functionArgumentsData[argument]
+        
+        debug("Checking if argument is 'res'",lastargument,lastargumentdata)
+  
+        if((lastargument === "res")&&(lastargumentdata === undefined)) {
+          functionArgumentsData[argument] = res
+        }
       }
     }
     
