@@ -13,7 +13,7 @@ Compatible with all data types valid in JavaScript objects, eobject automaticall
 Functions do work in eobject. It is one of the primary use cases for eobject. Functions that have arguments map both to URL query strings, as well as the body of the function.
 
 
-[Learn more about the usage of functions in eobject in the dedicated section] (#functions)
+[Learn more about the usage of functions in eobject in the dedicated section](#functions)
 
 
 ## Getting Started
