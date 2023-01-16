@@ -1,22 +1,22 @@
 var object = {}
 var setup = false;
 var settings = {
-  "debug": false,
-  "secureonly": false,
-  "rootpagedisplay": true,
-  "ifnotfoundsendtonext": true,
-  "ifemptyobjectstillsend": true,
-  "acceptqueryfunctionarguments": true,
-  "acceptbodyfunctionarguments": false,
-  "requestdata": false,
-  "responsedata": false,
-  "executefunctionintrycatch": true,
-  "functionerrormessage": (err) => {return {error:err}},
-  "validtypes": {
-    "function": true,
-    "object": true,
-    "string": true,
-    "number": true
+  debug: false,
+  secureonly: false,
+  rootpagedisplay: true,
+  ifnotfoundsendtonext: true,
+  ifemptyobjectstillsend: true,
+  acceptqueryfunctionarguments: true,
+  acceptbodyfunctionarguments: false,
+  requestdata: false,
+  responsedata: false,
+  executefunctionintrycatch: true,
+  functionerrormessage: (err) => {return {error:err}},
+  validtypes: {
+    function: true,
+    object: true,
+    string: true,
+    number: true
   }
 };
 

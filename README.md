@@ -69,16 +69,17 @@ app.use(eobject.generator)
   rootpagedisplay: true,
   ifnotfoundsendtonext: true,
   ifemptyobjectstillsend: true,
-  "acceptqueryfunctionarguments": true,
-  "acceptbodyfunctionarguments": false,
-  "requestdata": false,
-  "executefunctionintrycatch": true,
-  "functionerrormessage": (err) => {return {error:err}},
-  "validtypes": {
-    "function": true,
-    "object": true,
-    "string": true,
-    "number": true
+  acceptqueryfunctionarguments: true,
+  acceptbodyfunctionarguments: false,
+  requestdata: false,
+  responsedata: false,
+  executefunctionintrycatch: true,
+  functionerrormessage: (err) => {return {error:err}},
+  validtypes: {
+    function: true,
+    object: true,
+    string: true,
+    number: true
   }
 }
 ```
