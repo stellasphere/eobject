@@ -64,11 +64,11 @@ app.use(eobject.generator)
 #### Default Settings Object
 ```
 {
-  "debug": false,
-  "secureonly": false,
-  "rootpagedisplay": true,
-  "ifnotfoundsendtonext": true,
-  "ifemptyobjectstillsend": true,
+  debug: false,
+  secureonly: false,
+  rootpagedisplay: true,
+  ifnotfoundsendtonext: true,
+  ifemptyobjectstillsend: true,
   "acceptqueryfunctionarguments": true,
   "acceptbodyfunctionarguments": false,
   "requestdata": false,
