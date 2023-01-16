@@ -9,11 +9,7 @@ Compatible with all data types valid in JavaScript objects, eobject automaticall
 |--|--|
 | ![A JSON Object](https://i.ibb.co/HBJGwcM/chrome-Y4-Nm-I8-Au8s.png) | example.com/info - `{name:"Test",version: "1.0.0"}`<br> example.com/info/name - `Test`<br> example.com/info/version - `1.0.0`<br> example.com/users - `{}`<br> example.com/users/add - *nothing*<br> example.com/users/add?email=johndoe@example.com - `johndoe@example.com`
 
-### A note on functions
-Functions do work in eobject. It is one of the primary use cases for eobject. Functions that have arguments map both to URL query strings, as well as the body of the function.
-
-
-[Learn more about the usage of functions in eobject in the dedicated section](#functions)
+[Learn more about the usage of functions in eobject](#functions)
 
 
 ## Getting Started
@@ -101,15 +97,15 @@ The following table specifies each settings option: (See above for default setti
 | validtypes | Options to independently disable any specific data type from being used in eobject. |
 
 ## Functions
-Although all valid data types that work in JavaScript objects do work in eobject, functions are their own special data type which requires more work in order to be used properly. 
-
-For functions to effectively operate as an API, there must be methods of inputting function arguments from the client side. eobject has two ways of acomplishing this at this time:
+eobject has two methods of "mapping" functions into a API.
 - URL Query Strings
-- Request Body
+- JSON Request Body
+  
+URL queries work without any extra configuration, but using a request body requires some extra configuration. See [Pulling arguments from the request body](#Pulling-arguments-from-the-request-body)
 
 
 ### Pulling arguments from the query string of the requested URL
-eobject by default pulls argument data from the query string of the URL that is requested via key/value combinations of the query string, parsed by the native URL constructor. *You can disable* pulling arguments from query strings via the `acceptqueryfunctionarguments` option in the [settings] (#settings-options).
+eobject by default pulls argument data from the query string of the URL that is requested via key/value combinations of the query string, parsed by the native URL constructor. *You can disable* pulling arguments from query strings via the `acceptqueryfunctionarguments` option in the [settings](#settings-options).
 
 The order of the query strings does not matter, but the name of the key must exactly match the name of the argument in the function, including the case.  
 **Example:**  
@@ -121,7 +117,7 @@ If the argument name is `firstName`:
 Thus, it is recommended that function names do be named in lower-case. In the future, function names will become case-insensitive.
 
 ### Pulling arguments from the request body
-eobject also has the option of pulling argument data from a JSON-formatted body of a HTTP request. **This functionality must be enabled via the `acceptbodyfunctionarguments` option in the [settings] (#settings-options) in order to be used.**
+eobject also has the option of pulling argument data from a JSON-formatted body of a HTTP request. **This functionality must be enabled via the `acceptbodyfunctionarguments` option in the [settings](#settings-options) in order to be used.**
 
 Although having a body for other types of requests is theoretically valid, eobject only accepts common practice request bodies in PUT, POST and PATCH requests. 
 
