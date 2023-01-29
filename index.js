@@ -8,6 +8,7 @@ var settings = {
   ifemptyobjectstillsend: true,
   acceptqueryfunctionarguments: true,
   acceptbodyfunctionarguments: false,
+  decodeuripropertynames: true,
   requestdata: false,
   responsedata: false,
   executefunctionintrycatch: true,
@@ -60,6 +61,7 @@ module.exports.generator = async function(req, res, next) {
 
   for(i in path) {
     // Iterates up the path. If there is a matching property, then it narrows the object.
+    if(settings.decodeuripropertynames) path[i] = decodeURI(path[i])
     if(currentPathData.hasOwnProperty(path[i])) {
       currentPathData = currentPathData[path[i]]
       debug("Object Narrowed",currentPathData)
